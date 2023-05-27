@@ -1,7 +1,13 @@
-import Router from './pages/router';
+import Router from './pages/Router';
+import Footer from "./components/layout/Footer";
+import Header from "./components/layout/Header";
 
 function App() {
-  return <Router />;
+  return <>
+    <Header/>
+    <Router />
+    <Footer/>
+  </>;
 }
 
 export default App;
