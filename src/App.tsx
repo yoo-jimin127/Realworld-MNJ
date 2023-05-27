@@ -1,9 +1,7 @@
-function App() {
+import Router from './pages/router';
 
-  return (
-    <>
-    </>
-  );
+function App() {
+  return <Router />;
 }
 
 export default App;
