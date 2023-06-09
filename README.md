@@ -2,7 +2,29 @@
 
 2023 YOURSSU Realworld Project - Merry &amp; Nlog &amp; Juun
 
-## Commit Convention
+## 🏄🏻‍♂️ Collaborators
+<p>
+<a href="https://github.com/yoo-jimin127">
+   <img src="https://github.com/yoo-jimin127.png" width="150">
+</a>
+<a href="https://github.com/nnnlog">
+    <img src="https://github.com/nnnlog.png" width="150">
+</a>
+<a href="https://github.com/2wndrhs">
+    <img src="https://github.com/2wndrhs.png" width="150">
+</a>
+</p>
+
+## 📄 Document
+Swagger: https://api.realworld.io/api-docs/
+
+FE Specs: https://realworld-docs.netlify.app/docs/specs/frontend-specs/templates
+
+데모 앱: https://demo.realworld.io
+
+realworld 깃헙: https://github.com/gothinkster/realworld
+
+## 🏁 Commit Convention
 |**Header**|**기능**|
 |:---------|:------|
 |feat| 새로운 기능 추가|  
@@ -16,7 +38,7 @@
 |perf| 성능 개선|  
 |chore| 그 외 자잘한 수정|
 
-## Branch Convention
+## 🪵 Branch Convention
 |**Name**|**기능**|
 |:---------|:------|
 |main| 기준이 되는 브랜치로 제품을 배포하는 브랜치|  
