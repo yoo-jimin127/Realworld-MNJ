@@ -1,7 +1,17 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { postRegister } from "../apis";
 
 function Register() {
     const navigate = useNavigate();
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleSubmit = () => {
+        postRegister({username, email, password});
+        navigate("/");
+    }
 
     return <div className="auth-page">
         <div className="container page">
@@ -16,19 +26,18 @@ function Register() {
                         <li>That email is already taken</li>
                     </ul>
 
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <fieldset className="form-group">
-                            <input className="form-control form-control-lg" type="text" placeholder="Your Name"/>
+                            <input className="form-control form-control-lg" type="text" placeholder="Your Name" value={username} onChange={(event) => setUsername(event?.target.value)} />
                         </fieldset>
                         <fieldset className="form-group">
-                            <input className="form-control form-control-lg" type="text" placeholder="Email"/>
+                            <input className="form-control form-control-lg" type="text" placeholder="Email" value={email} onChange={(event) => setEmail(event?.target.value)} />
                         </fieldset>
                         <fieldset className="form-group">
-                            <input className="form-control form-control-lg" type="password" placeholder="Password"/>
+                            <input className="form-control form-control-lg" type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event?.target.value)} />
                         </fieldset>
                         <button 
-                            type="button"
-                            onClick={() => {navigate("/")}}
+                            type="submit"
                             className="btn btn-lg btn-primary pull-xs-right">Sign up</button>
                     </form>
                 </div>
