@@ -7,47 +7,54 @@ import EditArticle from './EditArticle';
 import CreateArticle from './CreateArticle';
 import Article from './Article';
 import Profile from './Profile';
+import HomeLayout from '../components/layout/HomeLayout';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Home />,
-  },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/register',
-    element: <Register />,
-  },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/settings',
-    element: <Settings />,
-  },
-  {
-    path: '/editor',
-    element: <CreateArticle />,
-  },
-  {
-    path: '/editor/:articleSlug',
-    element: <EditArticle />,
-  },
-  {
-    path: '/article/:articleSlug',
-    element: <Article />,
-  },
-  {
-    path: '/profile/:username',
-    element: <Profile />,
-  },
-  {
-    path: '/profile/:username/favorites',
-    element: <Profile />,
+    element: <HomeLayout />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: '/login',
+        element: <Login />,
+      },
+      {
+        path: '/register',
+        element: <Register />,
+      },
+      {
+        path: '/login',
+        element: <Login />,
+      },
+      {
+        path: '/settings',
+        element: <Settings />,
+      },
+      {
+        path: '/editor',
+        element: <CreateArticle />,
+      },
+      {
+        path: '/editor/:articleSlug',
+        element: <EditArticle />,
+      },
+      {
+        path: '/article/:articleSlug',
+        element: <Article />,
+      },
+      {
+        path: '/profile/:username',
+        element: <Profile />,
+      },
+      {
+        path: '/profile/:username/favorites',
+        element: <Profile />,
+      },
+    ],
   },
 ]);
 
