@@ -1,16 +1,23 @@
 import { ChangeEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { loginState, userState } from '../atoms';
 import { postLogin } from '../apis';
 
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [logined, setLogined] = useRecoilState(loginState);
+  const [userInfo, setUserInfo] = useRecoilState(userState);
 
   const handleSubmit = async (event: ChangeEvent<HTMLFormElement>) => {
+    // TODO : 유효성 검사 + 로그인 관련 예외 처리
     event.preventDefault();
     const { user } = await postLogin({ email, password });
     localStorage.setItem('token', user.token);
+    setLogined(true);
+    setUserInfo(user);
     navigate('/');
   };
 
