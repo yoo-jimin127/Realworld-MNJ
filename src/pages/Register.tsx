@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, ChangeEventHandler, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { postRegister } from '../apis';
 
@@ -8,7 +8,8 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = () => {
+  const handleSubmit = (event: ChangeEvent<HTMLFormElement>) => {
+    event.preventDefault();
     postRegister({ username, email, password });
     navigate('/');
   };
