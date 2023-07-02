@@ -47,11 +47,11 @@ const router = createBrowserRouter([
         element: <Article />,
       },
       {
-        path: '/profile/:username',
+        path: '/:username',
         element: <Profile />,
       },
       {
-        path: '/profile/:username/favorites',
+        path: '/:username/favorites',
         element: <Profile />,
       },
     ],
