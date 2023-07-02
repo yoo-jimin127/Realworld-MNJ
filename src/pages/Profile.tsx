@@ -10,8 +10,9 @@ function Profile() {
   const userInfo = useRecoilValue(userState);
   const location = useLocation();
   const [active, setActive] = useState('my');
+  const articlesCountRef = useRef<number>(0);
   const articlesRef = useRef<ArticleProps[]>([]);
-
+  
   const fetchArticles = async (username: string) => {
     let data;
     if (active === 'my') {
@@ -19,12 +20,12 @@ function Profile() {
     } else {
       data = await getFavoritedArticles(username);
     }
-    articlesRef.current = data;
+    articlesRef.current = data.articles;
+    articlesCountRef.current = data.articlesCount;
   };
 
   useEffect(() => {
     const { pathname } = location;
-    console.log(pathname);
     if (pathname.includes('favorites')) {
       setActive('favorites');
     } else {
@@ -45,10 +46,10 @@ function Profile() {
               <img src="http://i.imgur.com/Qr71crq.jpg" className="user-img" alt="user-img" />
               <h4>{userInfo.username}</h4>
               <p>{userInfo.bio}</p>
-              <button className="btn btn-sm btn-outline-secondary action-btn" type="button">
-                <i className="ion-plus-round" />
-                &nbsp; Follow {userInfo.username}
-              </button>
+              <Link to="/settings" className="btn btn-sm btn-outline-secondary action-btn" type="button">
+                <i className="ion-gear-a" />
+                &nbsp; Edit Profile Settings
+              </Link>
             </div>
           </div>
         </div>
@@ -77,9 +78,10 @@ function Profile() {
                 </li>
               </ul>
             </div>
-            {articlesRef.current.map((article) => (
-              <ArticleForm />
-            ))}
+            {articlesCountRef.current
+              ? articlesRef.current.map((article) => <ArticleForm />)
+              // TODO : css 수정
+              : 'No articles are here... yet.'}
           </div>
         </div>
       </div>
