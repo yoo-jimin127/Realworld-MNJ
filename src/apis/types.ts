@@ -3,10 +3,12 @@ export interface RegisterProps {
   email: string;
   password: string;
 }
+
 export interface LoginProps {
   email: string;
   password: string;
 }
+
 export interface SettingProps {
   email: string;
   password: string;
@@ -15,7 +17,7 @@ export interface SettingProps {
   image: string;
 }
 
-export interface ArticleProps {
+export interface ArticleListProps {
   slug: string;
   title: string;
   description: string;
@@ -31,4 +33,11 @@ export interface ArticleProps {
     image: string;
     following: boolean;
   };
+}
+
+export interface ArticleProps {
+  title: string,
+  description: string,
+  body: string,
+  tagList: string[],
 }

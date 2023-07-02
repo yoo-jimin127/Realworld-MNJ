@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { RegisterProps, LoginProps, SettingProps } from './types';
+import { RegisterProps, LoginProps, SettingProps, ArticleProps } from './types';
 
 const baseURL = `https://api.realworld.io/api`;
 const token = localStorage.getItem('token');
@@ -53,3 +53,15 @@ export const getFavoritedArticles = async (username: string) => {
   });
   return res.data;
 };
+
+export const createArticle = async ({ title, description, body, tagList }: ArticleProps) => {
+  const res = await authHttp.post(`${baseURL}/articles`, {
+    article: { title, description, body, tagList },
+  });
+  return res.data;
+}
+
+export const getArticle = async (slug: string) => {
+  const res = await http.get(`/articles/${slug}`);
+  return res.data;
+}
