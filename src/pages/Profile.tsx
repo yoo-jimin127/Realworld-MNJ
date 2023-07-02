@@ -4,15 +4,15 @@ import { useRecoilValue } from 'recoil';
 import { userState } from '../atoms';
 import ArticleForm from '../components/profile/ArticleForm';
 import { getFavoritedArticles, getMyArticles } from '../apis';
-import { ArticleProps } from '../apis/types';
+import { ArticleListProps } from '../apis/types';
 
 function Profile() {
   const userInfo = useRecoilValue(userState);
   const location = useLocation();
   const [active, setActive] = useState('my');
   const articlesCountRef = useRef<number>(0);
-  const articlesRef = useRef<ArticleProps[]>([]);
-  
+  const articlesRef = useRef<ArticleListProps[]>([]);
+
   const fetchArticles = async (username: string) => {
     let data;
     if (active === 'my') {
@@ -46,7 +46,11 @@ function Profile() {
               <img src="http://i.imgur.com/Qr71crq.jpg" className="user-img" alt="user-img" />
               <h4>{userInfo.username}</h4>
               <p>{userInfo.bio}</p>
-              <Link to="/settings" className="btn btn-sm btn-outline-secondary action-btn" type="button">
+              <Link
+                to="/settings"
+                className="btn btn-sm btn-outline-secondary action-btn"
+                type="button"
+              >
                 <i className="ion-gear-a" />
                 &nbsp; Edit Profile Settings
               </Link>
@@ -80,8 +84,8 @@ function Profile() {
             </div>
             {articlesCountRef.current
               ? articlesRef.current.map((article) => <ArticleForm />)
-              // TODO : css 수정
-              : 'No articles are here... yet.'}
+              : // TODO : css 수정
+                'No articles are here... yet.'}
           </div>
         </div>
       </div>
