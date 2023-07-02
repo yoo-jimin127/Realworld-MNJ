@@ -1,12 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../atoms';
+import ArticleForm from '../components/profile/ArticleForm';
+import { getFavoritedArticles, getMyArticles } from '../apis';
+import { ArticleProps } from '../apis/types';
 
 function Profile() {
   const userInfo = useRecoilValue(userState);
   const location = useLocation();
   const [active, setActive] = useState('my');
+  const articlesRef = useRef<ArticleProps[]>([]);
+
+  const fetchArticles = async (username: string) => {
+    let data;
+    if (active === 'my') {
+      data = await getMyArticles(username);
+    } else {
+      data = await getFavoritedArticles(username);
+    }
+    articlesRef.current = data;
+  };
 
   useEffect(() => {
     const { pathname } = location;
@@ -17,6 +31,10 @@ function Profile() {
       setActive('my');
     }
   }, [location]);
+
+  useEffect(() => {
+    fetchArticles(userInfo.username);
+  }, []);
 
   return (
     <div className="profile-page">
@@ -59,54 +77,9 @@ function Profile() {
                 </li>
               </ul>
             </div>
-
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" />
-                </a>
-                <div className="info">
-                  <a href="" className="author">
-                    Eric Simons
-                  </a>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart" /> 29
-                </button>
-              </div>
-              <a href="" className="preview-link">
-                <h1>How to build webapps that scale</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-              </a>
-            </div>
-
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="">
-                  <img src="http://i.imgur.com/N4VcUeJ.jpg" />
-                </a>
-                <div className="info">
-                  <a href="" className="author">
-                    Albert Pai
-                  </a>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart" /> 32
-                </button>
-              </div>
-              <a href="" className="preview-link">
-                <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-                <ul className="tag-list">
-                  <li className="tag-default tag-pill tag-outline">Music</li>
-                  <li className="tag-default tag-pill tag-outline">Song</li>
-                </ul>
-              </a>
-            </div>
+            {articlesRef.current.map((article) => (
+              <ArticleForm />
+            ))}
           </div>
         </div>
       </div>
