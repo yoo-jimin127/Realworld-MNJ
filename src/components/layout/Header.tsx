@@ -34,7 +34,7 @@ function Header() {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to={`/profile/${userInfo.username}`}>
+              <Link className="nav-link" to={`/@${userInfo.username}`}>
                 {' '}
                 <img className="user-pic" src={userInfo.image} alt="user-img" />
                 &nbsp;{userInfo.username}{' '}

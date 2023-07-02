@@ -1,18 +1,22 @@
+import { useRecoilValue } from "recoil";
+import { userState } from "../atoms";
+
 function Profile() {
+    const userInfo = useRecoilValue(userState);
+
     return <div className="profile-page">
         <div className="user-info">
             <div className="container">
                 <div className="row">
                     <div className="col-xs-12 col-md-10 offset-md-1">
-                        <img src="http://i.imgur.com/Qr71crq.jpg" className="user-img"/>
-                        <h4>Eric Simons</h4>
+                        <img src="http://i.imgur.com/Qr71crq.jpg" className="user-img" alt="user-img" />
+                        <h4>{userInfo.username}</h4>
                         <p>
-                            Cofounder @GoThinkster, lived in Aol's HQ for a few months, kinda looks like Peeta from
-                            the Hunger Games
+                            {userInfo.bio}
                         </p>
-                        <button className="btn btn-sm btn-outline-secondary action-btn">
-                            <i className="ion-plus-round"></i>
-                            &nbsp; Follow Eric Simons
+                        <button className="btn btn-sm btn-outline-secondary action-btn" type="button">
+                            <i className="ion-plus-round"/>
+                            &nbsp; Follow {userInfo.username}
                         </button>
                     </div>
                 </div>
