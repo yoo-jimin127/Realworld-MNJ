@@ -15,5 +15,6 @@ export const userState = atom({
     email: '',
     password: '',
     image: '',
+    bio: '',
   },
 });
