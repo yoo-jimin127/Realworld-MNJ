@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { RegisterProps, LoginProps, SettingProps, ArticleProps } from './types';
+import { RegisterProps, LoginProps, SettingProps } from './types';
 
 const baseURL = `https://api.realworld.io/api`;
-const token = localStorage.getItem('token');
 
+const token = localStorage.getItem('token');
 const authHttp = axios.create({
   baseURL,
   headers: {
@@ -11,17 +11,13 @@ const authHttp = axios.create({
   },
 });
 
-const http = axios.create({
-  baseURL,
-});
-
 export const postRegister = async ({ username, email, password }: RegisterProps) => {
-  const res = await http.post(`$/users`, { user: { username, email, password } });
+  const res = await axios.post(`${baseURL}/users`, { user: { username, email, password } });
   return res.data;
 };
 
 export const postLogin = async ({ email, password }: LoginProps) => {
-  const res = await http.post(`/users/login`, { user: { email, password } });
+  const res = await axios.post(`${baseURL}/users/login`, { user: { email, password } });
   return res.data;
 };
 
@@ -31,37 +27,3 @@ export const updateUserInfo = async ({ email, password, username, bio, image }: 
   });
   return res.data;
 };
-
-export const getMyArticles = async (username: string) => {
-  const res = await http.get('/articles', {
-    params: {
-      author: username,
-      limit: 5,
-      offset: 0,
-    },
-  });
-  return res.data;
-};
-
-export const getFavoritedArticles = async (username: string) => {
-  const res = await http.get('/articles', {
-    params: {
-      favorited: username,
-      limit: 5,
-      offset: 0,
-    },
-  });
-  return res.data;
-};
-
-export const createArticle = async ({ title, description, body, tagList }: ArticleProps) => {
-  const res = await authHttp.post(`${baseURL}/articles`, {
-    article: { title, description, body, tagList },
-  });
-  return res.data;
-}
-
-export const getArticle = async (slug: string) => {
-  const res = await http.get(`/articles/${slug}`);
-  return res.data;
-}
