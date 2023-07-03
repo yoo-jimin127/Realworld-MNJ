@@ -67,9 +67,14 @@ export const updateArticle = async (article: ArticleProps, slug: string) => {
     article,
   });
   return res.data;
-}
+};
 
 export const deleteArticle = async (slug: string) => {
   const res = await authHttp.delete(`/articles/${slug}`);
   return res;
-}
+};
+
+export const followUser = async (username: string) => {
+  const res = await authHttp.post(`/profiles/${username}/follow`);
+  return res.data;
+};

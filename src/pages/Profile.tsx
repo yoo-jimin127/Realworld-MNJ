@@ -2,25 +2,30 @@ import { Link, NavLink, LoaderFunctionArgs, useLoaderData } from 'react-router-d
 import { useRecoilValue } from 'recoil';
 import { userState } from '../atoms';
 import ArticleForm from '../components/profile/ArticleForm';
-import { getFavoritedArticles, getMyArticles } from '../apis';
+import { followUser, getFavoritedArticles, getMyArticles } from '../apis';
 import { ArticleResponse } from '../apis/types';
 
 export const myArticlesLoader = async ({ params }: LoaderFunctionArgs) => {
   const username = params.username!.slice(1);
   const data = await getMyArticles(username);
-  return data;
+  return { data, username };
 };
 
 export const favoritedArticlesLoader = async ({ params }: LoaderFunctionArgs) => {
   const username = params.username!.slice(1);
   const data = await getFavoritedArticles(username);
-  return data;
+  return { data, username };
 };
 
 function Profile() {
   const userInfo = useRecoilValue(userState);
-  const { articles } = useLoaderData() as ArticleResponse;
-  console.log('articles', articles);
+  const { data, username } = useLoaderData();
+  const isSelf = userInfo.username === username;
+
+  const handleClickFollow = async (name: string) => {
+    const profile = await followUser(name);
+    console.log(profile);
+  };
 
   return (
     <div className="profile-page">
@@ -31,10 +36,21 @@ function Profile() {
               <img src="http://i.imgur.com/Qr71crq.jpg" className="user-img" alt="user-img" />
               <h4>{userInfo.username}</h4>
               <p>{userInfo.bio}</p>
-              <Link to="/settings" className="btn btn-sm btn-outline-secondary action-btn">
-                <i className="ion-gear-a" />
-                &nbsp; Edit Profile Settings
-              </Link>
+              {isSelf ? (
+                <Link to="/settings" className="btn btn-sm btn-outline-secondary action-btn">
+                  <i className="ion-gear-a" />
+                  &nbsp; Edit Profile Settings
+                </Link>
+              ) : (
+                <button
+                  onClick={() => handleClickFollow(username)}
+                  className="btn btn-sm btn-outline-secondary action-btn"
+                  type="button"
+                >
+                  <i className="ion-plus-round" />
+                  &nbsp; Follow {username}
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -65,8 +81,8 @@ function Profile() {
                 </li>
               </ul>
             </div>
-            {articles.length > 0
-              ? articles.map((article) => <ArticleForm />)
+            {data.articles.length > 0
+              ? data.articles.map((article) => <ArticleForm />)
               : // TODO : css 수정
                 'No articles are here... yet.'}
           </div>
