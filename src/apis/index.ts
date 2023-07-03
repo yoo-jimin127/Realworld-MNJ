@@ -61,3 +61,10 @@ export const getArticle = async (slug: string) => {
   const res = await http.get(`/articles/${slug}`);
   return res.data;
 };
+
+export const updateArticle = async (article: ArticleProps, slug: string) => {
+  const res = await authHttp.put(`${baseURL}/articles/${slug}`, {
+    article,
+  });
+  return res.data;
+}
