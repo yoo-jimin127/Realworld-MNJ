@@ -78,3 +78,8 @@ export const followUser = async (username: string) => {
   const res = await authHttp.post(`/profiles/${username}/follow`);
   return res.data;
 };
+
+export const unfollowUser = async (username: string) => {
+  const res = await authHttp.delete(`/profiles/${username}/follow`);
+  return res.data;
+}

@@ -1,9 +1,10 @@
 import { Link, NavLink, LoaderFunctionArgs, useLoaderData } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { useState } from 'react';
 import { userState } from '../atoms';
 import ArticleForm from '../components/profile/ArticleForm';
-import { followUser, getFavoritedArticles, getMyArticles } from '../apis';
-import { ArticleResponse } from '../apis/types';
+import { followUser, getFavoritedArticles, getMyArticles, unfollowUser } from '../apis';
+import { ArticleListProps, ArticleResponse } from '../apis/types';
 
 export const myArticlesLoader = async ({ params }: LoaderFunctionArgs) => {
   const username = params.username!.slice(1);
@@ -21,11 +22,17 @@ function Profile() {
   const userInfo = useRecoilValue(userState);
   const { data, username } = useLoaderData();
   const isSelf = userInfo.username === username;
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const handleClickFollow = async (name: string) => {
     const profile = await followUser(name);
-    console.log(profile);
+    setIsFollowing(true);
   };
+
+  const handleClickUnfollow = async (name: string) => {
+    const profile = await unfollowUser(name);
+    setIsFollowing(false);
+  }
 
   return (
     <div className="profile-page">
@@ -43,12 +50,12 @@ function Profile() {
                 </Link>
               ) : (
                 <button
-                  onClick={() => handleClickFollow(username)}
+                  onClick={isFollowing? (() => handleClickUnfollow(username)) : (() => handleClickFollow(username))}
                   className="btn btn-sm btn-outline-secondary action-btn"
                   type="button"
                 >
                   <i className="ion-plus-round" />
-                  &nbsp; Follow {username}
+                  &nbsp; {isFollowing? 'Unfollow' : 'Follow'} {username}
                 </button>
               )}
             </div>
@@ -82,7 +89,7 @@ function Profile() {
               </ul>
             </div>
             {data.articles.length > 0
-              ? data.articles.map((article) => <ArticleForm />)
+              ? data.articles.map((article: ArticleListProps) => <ArticleForm />)
               : // TODO : css 수정
                 'No articles are here... yet.'}
           </div>
