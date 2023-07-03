@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
 import { updateUserInfo } from '../apis';
 import { userState, loginState } from '../atoms';
@@ -10,8 +10,8 @@ function Settings() {
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [image, setImage] = useState('');
-  const [userInfo, setUserInfo] = useRecoilState(userState);
-  const [logined, setLogined] = useRecoilState(loginState);
+  const setUserInfo = useSetRecoilState(userState);
+  const setLogined = useSetRecoilState(loginState);
   const navigate = useNavigate();
 
   const handleSubmit = async (event: ChangeEvent<HTMLFormElement>) => {
@@ -20,12 +20,12 @@ function Settings() {
     setUserInfo(user);
     navigate(`/@${username}`);
   };
-  
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     setLogined(false);
     navigate('/');
-  }
+  };
 
   return (
     <div className="settings-page">

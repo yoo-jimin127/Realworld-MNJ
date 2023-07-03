@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { loginState, userState } from '../../atoms';
 
 function Header() {
   const logined = useRecoilValue(loginState);
   const userInfo = useRecoilValue(userState);
+  const activeTabClass = ({ isActive }: { isActive: boolean }) =>
+    (isActive ? 'active' : '').concat(' ', 'nav-link');
 
   return (
     <nav className="navbar navbar-light">
@@ -15,48 +17,48 @@ function Header() {
         {logined ? (
           <ul className="nav navbar-nav pull-xs-right">
             <li className="nav-item">
-              <Link className="nav-link active" to="/">
+              <NavLink className={activeTabClass} to="/">
                 Home
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/editor">
+              <NavLink className={activeTabClass} to="/editor">
                 {' '}
                 <i className="ion-compose" />
                 &nbsp;New Article{' '}
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/settings">
+              <NavLink className={activeTabClass} to="/settings">
                 {' '}
                 <i className="ion-gear-a" />
                 &nbsp;Settings{' '}
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to={`/profile/${userInfo.username}`}>
+              <NavLink className={activeTabClass} to={`/@${userInfo.username}`}>
                 {' '}
                 <img className="user-pic" src={userInfo.image} alt="user-img" />
                 &nbsp;{userInfo.username}{' '}
-              </Link>
+              </NavLink>
             </li>
           </ul>
         ) : (
           <ul className="nav navbar-nav pull-xs-right">
             <li className="nav-item">
-              <Link className="nav-link active" to="/">
+              <NavLink className={activeTabClass} to="/">
                 Home
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/login">
+              <NavLink className={activeTabClass} to="/login">
                 Sign in
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/register">
+              <NavLink className={activeTabClass} to="/register">
                 Sign up
-              </Link>
+              </NavLink>
             </li>
           </ul>
         )}
