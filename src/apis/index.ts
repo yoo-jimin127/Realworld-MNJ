@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { RegisterProps, LoginProps, SettingProps } from './types';
+import { RegisterProps, LoginProps, SettingProps, ArticleProps } from './types';
 
 const baseURL = `https://api.realworld.io/api`;
 
