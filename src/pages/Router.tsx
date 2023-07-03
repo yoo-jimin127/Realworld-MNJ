@@ -5,8 +5,8 @@ import Register from './Register';
 import Settings from './Settings';
 import EditArticle from './EditArticle';
 import CreateArticle from './CreateArticle';
-import Article from './Article';
-import Profile from './Profile';
+import Article, { articleLoader } from './Article';
+import Profile, { favoritedArticlesLoader, myArticlesLoader } from './Profile';
 import HomeLayout from '../components/layout/HomeLayout';
 
 const router = createBrowserRouter([
@@ -45,14 +45,17 @@ const router = createBrowserRouter([
       {
         path: '/article/:articleSlug',
         element: <Article />,
+        loader: articleLoader,
       },
       {
         path: '/:username',
         element: <Profile />,
+        loader: myArticlesLoader,
       },
       {
         path: '/:username/favorites',
         element: <Profile />,
+        loader: favoritedArticlesLoader,
       },
     ],
   },
