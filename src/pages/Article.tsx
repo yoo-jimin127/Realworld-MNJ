@@ -1,5 +1,5 @@
-import { Link, LoaderFunctionArgs, useLoaderData } from 'react-router-dom';
-import { getArticle } from '../apis';
+import { Link, LoaderFunctionArgs, useLoaderData, useNavigate } from 'react-router-dom';
+import { deleteArticle, getArticle } from '../apis';
 import { ArticleListProps } from '../apis/types';
 
 export const articleLoader = async ({ params }: LoaderFunctionArgs) => {
@@ -9,8 +9,14 @@ export const articleLoader = async ({ params }: LoaderFunctionArgs) => {
 };
 
 function Article() {
+  const navigate = useNavigate();
   const article = useLoaderData() as ArticleListProps;
   console.log(article);
+
+  const handleDelete = (slug: string) => {
+    deleteArticle(slug);
+    navigate('/');
+  }
 
   return (
     <div className="article-page">
@@ -33,10 +39,10 @@ function Article() {
               &nbsp; Edit Article
             </Link>
             &nbsp;&nbsp;
-            <Link className="btn btn-sm btn-outline-danger" to={`/editor/${article.slug}`}>
+            <button className="btn btn-sm btn-outline-danger" type="button" onClick={() => handleDelete(article.slug)}>
               <i className="ion-trash-a" />
               &nbsp; Delete Article
-            </Link>
+            </button>
           </div>
         </div>
       </div>

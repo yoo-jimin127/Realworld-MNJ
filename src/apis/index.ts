@@ -63,8 +63,13 @@ export const getArticle = async (slug: string) => {
 };
 
 export const updateArticle = async (article: ArticleProps, slug: string) => {
-  const res = await authHttp.put(`${baseURL}/articles/${slug}`, {
+  const res = await authHttp.put(`/articles/${slug}`, {
     article,
   });
   return res.data;
+}
+
+export const deleteArticle = async (slug: string) => {
+  const res = await authHttp.delete(`/articles/${slug}`);
+  return res;
 }
