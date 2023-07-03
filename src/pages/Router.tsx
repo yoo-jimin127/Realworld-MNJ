@@ -3,7 +3,7 @@ import Home from './Home';
 import Login from './Login';
 import Register from './Register';
 import Settings from './Settings';
-import EditArticle from './EditArticle';
+import EditArticle, { updateArticleLoader } from './EditArticle';
 import CreateArticle from './CreateArticle';
 import Article, { articleLoader } from './Article';
 import Profile, { favoritedArticlesLoader, myArticlesLoader } from './Profile';
@@ -41,6 +41,7 @@ const router = createBrowserRouter([
       {
         path: '/editor/:articleSlug',
         element: <EditArticle />,
+        loader: updateArticleLoader,
       },
       {
         path: '/article/:articleSlug',
