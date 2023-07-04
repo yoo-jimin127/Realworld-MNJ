@@ -1,7 +1,14 @@
 import { Link, LoaderFunctionArgs, useLoaderData, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { useState } from 'react';
-import { deleteArticle, favoriteArticle, getArticle, unfavoriteArticle } from '../apis';
+import {
+  deleteArticle,
+  favoriteArticle,
+  followUser,
+  getArticle,
+  unfavoriteArticle,
+  unfollowUser,
+} from '../apis';
 import { ArticleListProps } from '../apis/types';
 import { userState } from '../atoms';
 
@@ -17,11 +24,22 @@ function Article() {
   const userInfo = useRecoilValue(userState);
   const [favorited, setFavorited] = useState(article.favorited);
   const [favoriteCount, setFavoriteCount] = useState(article.favoritesCount);
+  const [isFollowing, setIsFollowing] = useState(article.author.following);
   const isSelf = article.author.username === userInfo.username;
 
   const handleDelete = (slug: string) => {
     deleteArticle(slug);
     navigate('/');
+  };
+
+  const handleClickFollow = async (name: string) => {
+    const profileData = await followUser(name);
+    setIsFollowing(profileData.profile.following);
+  };
+
+  const handleClickUnfollow = async (name: string) => {
+    const profileData = await unfollowUser(name);
+    setIsFollowing(profileData.profile.following);
   };
 
   const handleClickFavorite = async (slug: string) => {
@@ -71,9 +89,17 @@ function Article() {
               </>
             ) : (
               <>
-                <button className="btn btn-sm btn-outline-secondary" type="button">
+                <button
+                  onClick={
+                    isFollowing
+                      ? () => handleClickUnfollow(article.author.username)
+                      : () => handleClickFollow(article.author.username)
+                  }
+                  className="btn btn-sm btn-outline-secondary"
+                  type="button"
+                >
                   <i className="ion-plus-round" />
-                  &nbsp; Follow {article.author.username}{' '}
+                  &nbsp; {isFollowing ? 'Unfollow' : 'Follow'} {article.author.username}{' '}
                 </button>
                 &nbsp;&nbsp;
                 <button
