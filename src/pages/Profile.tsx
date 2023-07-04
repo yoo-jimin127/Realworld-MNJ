@@ -2,9 +2,9 @@ import { Link, NavLink, LoaderFunctionArgs, useLoaderData } from 'react-router-d
 import { useRecoilValue } from 'recoil';
 import { useState } from 'react';
 import { userState } from '../atoms';
-import ArticleForm from '../components/profile/ArticleForm';
+import ArticleForm from '../components/profile/ArticlePreview';
 import { followUser, getFavoritedArticles, getMyArticles, getProfile, unfollowUser } from '../apis';
-import { ArticleListProps, ArticleResponse } from '../apis/types';
+import { ArticleListProps } from '../apis/types';
 
 export const myArticlesLoader = async ({ params }: LoaderFunctionArgs) => {
   const username = params.username!.slice(1);
@@ -103,7 +103,7 @@ function Profile() {
               </ul>
             </div>
             {articleData.articles.length > 0
-              ? articleData.articles.map((article: ArticleListProps) => <ArticleForm />)
+              ? articleData.articles.map((article: ArticleListProps) => <ArticleForm article={article} />)
               : // TODO : css 수정
                 'No articles are here... yet.'}
           </div>
