@@ -103,7 +103,9 @@ function Profile() {
               </ul>
             </div>
             {articleData.articles.length > 0
-              ? articleData.articles.map((article: ArticleListProps) => <ArticleForm article={article} />)
+              ? articleData.articles.map((article: ArticleListProps) => (
+                  <ArticleForm key={article.slug} article={article} />
+                ))
               : // TODO : css 수정
                 'No articles are here... yet.'}
           </div>
