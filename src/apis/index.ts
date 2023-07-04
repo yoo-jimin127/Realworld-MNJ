@@ -74,6 +74,11 @@ export const deleteArticle = async (slug: string) => {
   return res;
 };
 
+export const getProfile = async (username: string) => {
+  const res = await http.get(`/profiles/${username}`);
+  return res.data;
+};
+
 export const followUser = async (username: string) => {
   const res = await authHttp.post(`/profiles/${username}/follow`);
   return res.data;
@@ -82,4 +87,4 @@ export const followUser = async (username: string) => {
 export const unfollowUser = async (username: string) => {
   const res = await authHttp.delete(`/profiles/${username}/follow`);
   return res.data;
-}
+};
