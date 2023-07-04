@@ -1,5 +1,7 @@
+import { Link } from 'react-router-dom';
+
 function Home() {
-  return <>
+  return (
     <div className="home-page">
       <div className="banner">
         <div className="container">
@@ -14,23 +16,31 @@ function Home() {
             <div className="feed-toggle">
               <ul className="nav nav-pills outline-active">
                 <li className="nav-item">
-                  <a className="nav-link disabled" href="">Your Feed</a>
+                  <a className="nav-link disabled" href="">
+                    Your Feed
+                  </a>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link active" href="">Global Feed</a>
+                  <a className="nav-link active" href="">
+                    Global Feed
+                  </a>
                 </li>
               </ul>
             </div>
 
             <div className="article-preview">
               <div className="article-meta">
-                <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg"/></a>
+                <a href="profile.html">
+                  <img src="http://i.imgur.com/Qr71crq.jpg" />
+                </a>
                 <div className="info">
-                  <a href="" className="author">Eric Simons</a>
+                  <Link to="/@Anah Benešová" className="author">
+                    Eric Simons
+                  </Link>
                   <span className="date">January 20th</span>
                 </div>
                 <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart"></i> 29
+                  <i className="ion-heart" /> 29
                 </button>
               </div>
               <a href="" className="preview-link">
@@ -42,13 +52,17 @@ function Home() {
 
             <div className="article-preview">
               <div className="article-meta">
-                <a href="profile.html"><img src="http://i.imgur.com/N4VcUeJ.jpg"/></a>
+                <a href="profile.html">
+                  <img src="http://i.imgur.com/N4VcUeJ.jpg" />
+                </a>
                 <div className="info">
-                  <a href="" className="author">Albert Pai</a>
+                  <a href="" className="author">
+                    Albert Pai
+                  </a>
                   <span className="date">January 20th</span>
                 </div>
                 <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart"></i> 32
+                  <i className="ion-heart" /> 32
                 </button>
               </div>
               <a href="" className="preview-link">
@@ -64,21 +78,37 @@ function Home() {
               <p>Popular Tags</p>
 
               <div className="tag-list">
-                <a href="" className="tag-pill tag-default">programming</a>
-                <a href="" className="tag-pill tag-default">javascript</a>
-                <a href="" className="tag-pill tag-default">emberjs</a>
-                <a href="" className="tag-pill tag-default">angularjs</a>
-                <a href="" className="tag-pill tag-default">react</a>
-                <a href="" className="tag-pill tag-default">mean</a>
-                <a href="" className="tag-pill tag-default">node</a>
-                <a href="" className="tag-pill tag-default">rails</a>
+                <a href="" className="tag-pill tag-default">
+                  programming
+                </a>
+                <a href="" className="tag-pill tag-default">
+                  javascript
+                </a>
+                <a href="" className="tag-pill tag-default">
+                  emberjs
+                </a>
+                <a href="" className="tag-pill tag-default">
+                  angularjs
+                </a>
+                <a href="" className="tag-pill tag-default">
+                  react
+                </a>
+                <a href="" className="tag-pill tag-default">
+                  mean
+                </a>
+                <a href="" className="tag-pill tag-default">
+                  node
+                </a>
+                <a href="" className="tag-pill tag-default">
+                  rails
+                </a>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </>;
+  );
 }
 
 export default Home;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { RegisterProps, LoginProps, SettingProps } from './types';
+import { RegisterProps, LoginProps, SettingProps, ArticleProps } from './types';
 
 const baseURL = `https://api.realworld.io/api`;
 
@@ -33,7 +33,7 @@ export const updateUserInfo = async ({ email, password, username, bio, image }: 
 };
 
 export const getMyArticles = async (username: string) => {
-  const res = await http.get('/articles', {
+  const res = await authHttp.get('/articles', {
     params: {
       author: username,
     },
@@ -42,7 +42,7 @@ export const getMyArticles = async (username: string) => {
 };
 
 export const getFavoritedArticles = async (username: string) => {
-  const res = await http.get('/articles', {
+  const res = await authHttp.get('/articles', {
     params: {
       favorited: username,
     },
@@ -58,6 +58,33 @@ export const createArticle = async (article: ArticleProps) => {
 };
 
 export const getArticle = async (slug: string) => {
-  const res = await http.get(`/articles/${slug}`);
+  const res = await authHttp.get(`/articles/${slug}`);
+  return res.data;
+};
+
+export const updateArticle = async (article: ArticleProps, slug: string) => {
+  const res = await authHttp.put(`/articles/${slug}`, {
+    article,
+  });
+  return res.data;
+};
+
+export const deleteArticle = async (slug: string) => {
+  const res = await authHttp.delete(`/articles/${slug}`);
+  return res;
+};
+
+export const getProfile = async (username: string) => {
+  const res = await authHttp.get(`/profiles/${username}`);
+  return res.data;
+};
+
+export const followUser = async (username: string) => {
+  const res = await authHttp.post(`/profiles/${username}/follow`);
+  return res.data;
+};
+
+export const unfollowUser = async (username: string) => {
+  const res = await authHttp.delete(`/profiles/${username}/follow`);
   return res.data;
 };

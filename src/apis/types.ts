@@ -41,5 +41,5 @@ export interface ArticleProps {
   title: string;
   description: string;
   body: string;
-  tagList: string[];
+  tagList?: string[];
 }
