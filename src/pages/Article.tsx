@@ -16,7 +16,7 @@ function Article() {
   const handleDelete = (slug: string) => {
     deleteArticle(slug);
     navigate('/');
-  }
+  };
 
   return (
     <div className="article-page">
@@ -32,14 +32,19 @@ function Article() {
               <a href="/" className="author">
                 {article.author.username}
               </a>
-              <span className="date">January 20th</span>
+              {/* TODO: 날짜 포맷팅 */}
+              <span className="date">{article.createdAt}</span>
             </div>
             <Link className="btn btn-sm btn-outline-secondary" to={`/editor/${article.slug}`}>
               <i className="ion-edit" />
               &nbsp; Edit Article
             </Link>
             &nbsp;&nbsp;
-            <button className="btn btn-sm btn-outline-danger" type="button" onClick={() => handleDelete(article.slug)}>
+            <button
+              className="btn btn-sm btn-outline-danger"
+              type="button"
+              onClick={() => handleDelete(article.slug)}
+            >
               <i className="ion-trash-a" />
               &nbsp; Delete Article
             </button>
@@ -51,9 +56,11 @@ function Article() {
         <div className="row article-content">
           <div className="col-md-12">
             <p>{article.body}</p>
-            {/* TODO : 무슨 내용 들어가야 하는지 조사 */}
-            <h2 id="introducing-ionic">{article.description}</h2>
-            <p>{article.body}</p>
+            <ul className="tag-list">
+              {article.tagList.map((tag) => (
+                <li className="tag-default tag-pill tag-outline ng-binding ng-scope">{tag}</li>
+              ))}
+            </ul>
           </div>
         </div>
 
@@ -82,31 +89,6 @@ function Article() {
           </div>
         </div>
 
-        <hr />
-
-        <div className="article-actions">
-          <div className="article-meta">
-            <a href="profile.html">
-              <img alt="" src="http://i.imgur.com/Qr71crq.jpg" />
-            </a>
-            <div className="info">
-              <a href="/" className="author">
-                Eric Simons
-              </a>
-              <span className="date">January 20th</span>
-            </div>
-            <button type="button" className="btn btn-sm btn-outline-secondary">
-              <i className="ion-plus-round" />
-              &nbsp; Follow Eric Simons
-            </button>
-            &nbsp;
-            <button type="button" className="btn btn-sm btn-outline-primary">
-              <i className="ion-heart" />
-              &nbsp; Favorite Post <span className="counter">(29)</span>
-            </button>
-          </div>
-        </div>
-
         <div className="row">
           <div className="col-xs-12 col-md-8 offset-md-2">
             <form className="card comment-form">
@@ -115,27 +97,11 @@ function Article() {
               </div>
               <div className="card-footer">
                 <img alt="" src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                <button type="button" className="btn btn-sm btn-primary">Post Comment</button>
+                <button type="button" className="btn btn-sm btn-primary">
+                  Post Comment
+                </button>
               </div>
             </form>
-
-            <div className="card">
-              <div className="card-block">
-                <p className="card-text">
-                  With supporting text below as a natural lead-in to additional content.
-                </p>
-              </div>
-              <div className="card-footer">
-                <a href="/" className="comment-author">
-                  <img alt="" src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                </a>
-                &nbsp;
-                <a href="/" className="comment-author">
-                  Jacob Schmidt
-                </a>
-                <span className="date-posted">Dec 29th</span>
-              </div>
-            </div>
 
             <div className="card">
               <div className="card-block">
