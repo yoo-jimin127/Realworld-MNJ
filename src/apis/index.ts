@@ -33,7 +33,7 @@ export const updateUserInfo = async ({ email, password, username, bio, image }: 
 };
 
 export const getMyArticles = async (username: string) => {
-  const res = await http.get('/articles', {
+  const res = await authHttp.get('/articles', {
     params: {
       author: username,
     },
@@ -42,7 +42,7 @@ export const getMyArticles = async (username: string) => {
 };
 
 export const getFavoritedArticles = async (username: string) => {
-  const res = await http.get('/articles', {
+  const res = await authHttp.get('/articles', {
     params: {
       favorited: username,
     },
@@ -58,7 +58,7 @@ export const createArticle = async (article: ArticleProps) => {
 };
 
 export const getArticle = async (slug: string) => {
-  const res = await http.get(`/articles/${slug}`);
+  const res = await authHttp.get(`/articles/${slug}`);
   return res.data;
 };
 
@@ -75,7 +75,7 @@ export const deleteArticle = async (slug: string) => {
 };
 
 export const getProfile = async (username: string) => {
-  const res = await http.get(`/profiles/${username}`);
+  const res = await authHttp.get(`/profiles/${username}`);
   return res.data;
 };
 
