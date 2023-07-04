@@ -43,11 +43,14 @@ function Home() {
                   <i className="ion-heart" /> 29
                 </button>
               </div>
-              <a href="" className="preview-link">
+              <Link
+                to="article/If-we-quantify-the-alarm-we-can-get-to-the-FTP-pixel-through-the-online-SSL-interface!-120863"
+                className="preview-link"
+              >
                 <h1>How to build webapps that scale</h1>
                 <p>This is the description for the post.</p>
                 <span>Read more...</span>
-              </a>
+              </Link>
             </div>
 
             <div className="article-preview">

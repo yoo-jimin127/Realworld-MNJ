@@ -1,6 +1,9 @@
 import { Link, LoaderFunctionArgs, useLoaderData, useNavigate } from 'react-router-dom';
-import { deleteArticle, getArticle } from '../apis';
+import { useRecoilValue } from 'recoil';
+import { useState } from 'react';
+import { deleteArticle, favoriteArticle, getArticle, unfavoriteArticle } from '../apis';
 import { ArticleListProps } from '../apis/types';
+import { userState } from '../atoms';
 
 export const articleLoader = async ({ params }: LoaderFunctionArgs) => {
   const slug = params.articleSlug!;
@@ -11,11 +14,26 @@ export const articleLoader = async ({ params }: LoaderFunctionArgs) => {
 function Article() {
   const navigate = useNavigate();
   const article = useLoaderData() as ArticleListProps;
-  console.log(article);
+  const userInfo = useRecoilValue(userState);
+  const [favorited, setFavorited] = useState(article.favorited);
+  const [favoriteCount, setFavoriteCount] = useState(article.favoritesCount);
+  const isSelf = article.author.username === userInfo.username;
 
   const handleDelete = (slug: string) => {
     deleteArticle(slug);
     navigate('/');
+  };
+
+  const handleClickFavorite = async (slug: string) => {
+    const articleData = await favoriteArticle(slug);
+    setFavorited(articleData.article.favorited);
+    setFavoriteCount(articleData.article.favoritesCount);
+  };
+
+  const handleClickUnfavorite = async (slug: string) => {
+    const articleData = await unfavoriteArticle(slug);
+    setFavorited(articleData.article.favorited);
+    setFavoriteCount(articleData.article.favoritesCount);
   };
 
   return (
@@ -35,19 +53,44 @@ function Article() {
               {/* TODO: 날짜 포맷팅 */}
               <span className="date">{article.createdAt}</span>
             </div>
-            <Link className="btn btn-sm btn-outline-secondary" to={`/editor/${article.slug}`}>
-              <i className="ion-edit" />
-              &nbsp; Edit Article
-            </Link>
-            &nbsp;&nbsp;
-            <button
-              className="btn btn-sm btn-outline-danger"
-              type="button"
-              onClick={() => handleDelete(article.slug)}
-            >
-              <i className="ion-trash-a" />
-              &nbsp; Delete Article
-            </button>
+            {isSelf ? (
+              <>
+                <Link className="btn btn-sm btn-outline-secondary" to={`/editor/${article.slug}`}>
+                  <i className="ion-edit" />
+                  &nbsp; Edit Article
+                </Link>
+                &nbsp;&nbsp;
+                <button
+                  className="btn btn-sm btn-outline-danger"
+                  type="button"
+                  onClick={() => handleDelete(article.slug)}
+                >
+                  <i className="ion-trash-a" />
+                  &nbsp; Delete Article
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="btn btn-sm btn-outline-secondary" type="button">
+                  <i className="ion-plus-round" />
+                  &nbsp; Follow {article.author.username}{' '}
+                </button>
+                &nbsp;&nbsp;
+                <button
+                  onClick={
+                    favorited
+                      ? () => handleClickUnfavorite(article.slug)
+                      : () => handleClickFavorite(article.slug)
+                  }
+                  className="btn btn-sm btn-outline-primary"
+                  type="button"
+                >
+                  <i className="ion-heart" />
+                  &nbsp; {favorited ? 'Unfavorite' : 'Favorite'} Post{' '}
+                  <span className="counter">({favoriteCount})</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

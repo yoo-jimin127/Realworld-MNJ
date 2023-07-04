@@ -88,3 +88,13 @@ export const unfollowUser = async (username: string) => {
   const res = await authHttp.delete(`/profiles/${username}/follow`);
   return res.data;
 };
+
+export const favoriteArticle = async (slug: string) => {
+  const res = await authHttp.post(`/articles/${slug}/favorite`);
+  return res.data;
+};
+
+export const unfavoriteArticle = async (slug: string) => {
+  const res = await authHttp.delete(`/articles/${slug}/favorite`);
+  return res.data;
+};
