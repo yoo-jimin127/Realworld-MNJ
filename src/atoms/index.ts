@@ -11,8 +11,9 @@ export const loginState = atom({
 /** user 정보 selector */
 const userStateSelector = selector({
   key: 'userStateSelector',
-  get: async () => {
-    const { user } = await getUserInfo();
+  get: async ({ get }) => {
+    const logined = get(loginState);
+    const { user } = logined ? await getUserInfo() : { user: null };
     return user;
   },
 });

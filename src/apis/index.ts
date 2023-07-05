@@ -38,7 +38,7 @@ export const updateUserInfo = async ({ email, password, username, bio, image }: 
 };
 
 export const getGlobalArticle = async () => {
-  const res = await authHttp.get('/articles');
+  const res = await http.get('/articles');
   return res.data;
 };
 

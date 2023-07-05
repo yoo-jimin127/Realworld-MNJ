@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { getFeedArticle, getGlobalArticle, getTags } from '../apis';
 import ArticlePreview from '../components/profile/ArticlePreview';
 import { ArticleListProps } from '../apis/types';
+import { loginState } from '../atoms';
 
 function Home() {
   const [isYourTab, setIsYourTab] = useState(true);
   const [articles, setArticles] = useState([]);
   const [tags, setTags] = useState([]);
+  const logined = useRecoilValue(loginState);
 
   const fetchFeedArticle = async () => {
-    const articleData = await getFeedArticle();
+    const articleData = logined ? await getFeedArticle() : await getGlobalArticle();
     setArticles(articleData.articles);
   };
 
@@ -43,24 +46,38 @@ function Home() {
           <div className="col-md-9">
             <div className="feed-toggle">
               <ul className="nav nav-pills outline-active">
-                <li className="nav-item">
-                  <button
-                    type="button"
-                    className={isYourTab ? 'nav-link active' : 'nav-link disabled'}
-                    onClick={() => handleClickTab()}
-                  >
-                    Your Feed
-                  </button>
-                </li>
-                <li className="nav-item">
-                  <button
-                    type="button"
-                    className={isYourTab ? 'nav-link disabled' : 'nav-link active'}
-                    onClick={() => handleClickTab()}
-                  >
-                    Global Feed
-                  </button>
-                </li>
+                {logined ? (
+                  <>
+                    <li className="nav-item">
+                      <button
+                        type="button"
+                        className={isYourTab ? 'nav-link active' : 'nav-link disabled'}
+                        onClick={() => handleClickTab()}
+                      >
+                        Your Feed
+                      </button>
+                    </li>
+                    <li className="nav-item">
+                      <button
+                        type="button"
+                        className={isYourTab ? 'nav-link disabled' : 'nav-link active'}
+                        onClick={() => handleClickTab()}
+                      >
+                        Global Feed
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <li className="nav-item">
+                    <button
+                      type="button"
+                      className='nav-link active'
+                      onClick={() => handleClickTab()}
+                    >
+                      Global Feed
+                    </button>
+                  </li>
+                )}
               </ul>
             </div>
             {articles.map((article: ArticleListProps) => (
