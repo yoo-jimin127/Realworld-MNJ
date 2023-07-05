@@ -25,6 +25,11 @@ export const postLogin = async (user: LoginProps) => {
   return res.data;
 };
 
+export const getUserInfo = async () => {
+  const res = await authHttp.get(`/user`);
+  return res.data;
+}
+
 export const updateUserInfo = async ({ email, password, username, bio, image }: SettingProps) => {
   const res = await authHttp.put('/user', {
     user: { email, password, username, bio, image },
