@@ -1,6 +1,27 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { getFeedArticle, getGlobalArticle } from '../apis';
+import ArticlePreview from '../components/profile/ArticlePreview';
+import { ArticleListProps } from '../apis/types';
 
 function Home() {
+  const [isYourTab, setIsYourTab] = useState(true);
+  const [articles, setArticles] = useState([]);
+
+  const fetchFeedArticle = async () => {
+    const articleData = await getFeedArticle();
+    setArticles(articleData.articles);
+  };
+
+  const handleClickTab = async () => {
+    setIsYourTab(!isYourTab);
+    const articleData = isYourTab ? await getFeedArticle() : await getGlobalArticle();
+    setArticles(articleData.articles);
+  };
+
+  useEffect(() => {
+    fetchFeedArticle();
+  }, []);
+
   return (
     <div className="home-page">
       <div className="banner">
@@ -16,64 +37,28 @@ function Home() {
             <div className="feed-toggle">
               <ul className="nav nav-pills outline-active">
                 <li className="nav-item">
-                  <a className="nav-link disabled" href="">
+                  <button
+                    type="button"
+                    className={isYourTab ? 'nav-link active' : 'nav-link disabled'}
+                    onClick={() => handleClickTab()}
+                  >
                     Your Feed
-                  </a>
+                  </button>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link active" href="">
+                  <button
+                    type="button"
+                    className={isYourTab ? 'nav-link disabled' : 'nav-link active'}
+                    onClick={() => handleClickTab()}
+                  >
                     Global Feed
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
-
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="profile.html">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" />
-                </a>
-                <div className="info">
-                  <Link to="/@Anah Benešová" className="author">
-                    Eric Simons
-                  </Link>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart" /> 29
-                </button>
-              </div>
-              <Link
-                to="article/If-we-quantify-the-alarm-we-can-get-to-the-FTP-pixel-through-the-online-SSL-interface!-120863"
-                className="preview-link"
-              >
-                <h1>How to build webapps that scale</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-              </Link>
-            </div>
-
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="profile.html">
-                  <img src="http://i.imgur.com/N4VcUeJ.jpg" />
-                </a>
-                <div className="info">
-                  <a href="" className="author">
-                    Albert Pai
-                  </a>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart" /> 32
-                </button>
-              </div>
-              <a href="" className="preview-link">
-                <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-              </a>
-            </div>
+            {articles.map((article: ArticleListProps) => (
+              <ArticlePreview key={article.slug} article={article} />
+            ))}
           </div>
 
           <div className="col-md-3">

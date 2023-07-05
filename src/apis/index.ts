@@ -28,12 +28,22 @@ export const postLogin = async (user: LoginProps) => {
 export const getUserInfo = async () => {
   const res = await authHttp.get(`/user`);
   return res.data;
-}
+};
 
 export const updateUserInfo = async ({ email, password, username, bio, image }: SettingProps) => {
   const res = await authHttp.put('/user', {
     user: { email, password, username, bio, image },
   });
+  return res.data;
+};
+
+export const getGlobalArticle = async () => {
+  const res = await authHttp.get('/articles');
+  return res.data;
+};
+
+export const getFeedArticle = async () => {
+  const res = await authHttp.get('/articles/feed');
   return res.data;
 };
 
