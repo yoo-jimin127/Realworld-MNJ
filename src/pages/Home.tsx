@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { getFeedArticle, getGlobalArticle } from '../apis';
+import { getFeedArticle, getGlobalArticle, getTags } from '../apis';
 import ArticlePreview from '../components/profile/ArticlePreview';
 import { ArticleListProps } from '../apis/types';
 
 function Home() {
   const [isYourTab, setIsYourTab] = useState(true);
   const [articles, setArticles] = useState([]);
+  const [tags, setTags] = useState([]);
 
   const fetchFeedArticle = async () => {
     const articleData = await getFeedArticle();
@@ -18,8 +19,14 @@ function Home() {
     setArticles(articleData.articles);
   };
 
+  const fetchTags = async () => {
+    const tagData = await getTags();
+    setTags(tagData.tags);
+  };
+
   useEffect(() => {
     fetchFeedArticle();
+    fetchTags();
   }, []);
 
   return (
@@ -66,30 +73,11 @@ function Home() {
               <p>Popular Tags</p>
 
               <div className="tag-list">
-                <a href="" className="tag-pill tag-default">
-                  programming
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  javascript
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  emberjs
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  angularjs
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  react
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  mean
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  node
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  rails
-                </a>
+                {tags.map((tag) => (
+                  <a href="/" className="tag-pill tag-default">
+                    {tag}
+                  </a>
+                ))}
               </div>
             </div>
           </div>

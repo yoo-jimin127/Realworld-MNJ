@@ -113,3 +113,8 @@ export const unfavoriteArticle = async (slug: string) => {
   const res = await authHttp.delete(`/articles/${slug}/favorite`);
   return res.data;
 };
+
+export const getTags = async () => {
+  const res = await http.get('/tags');
+  return res.data;
+}
