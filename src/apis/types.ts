@@ -3,6 +3,14 @@ export interface RegisterProps {
   email: string;
   password: string;
 }
+
+export interface UserInfo {
+  email: string;
+  token: string;
+  username: string;
+  bio: string;
+  image: string;
+}
 export interface LoginProps {
   email: string;
   password: string;
@@ -13,10 +21,6 @@ export interface SettingProps {
   username: string;
   bio: string;
   image: string;
-}
-export interface ArticleResponse {
-  articles: ArticleListProps[];
-  articlesCount: number;
 }
 
 export interface ArticleListProps {
@@ -43,3 +47,5 @@ export interface ArticleProps {
   body: string;
   tagList?: string[];
 }
+
+export type HomeActiveTab = 'your' | 'global';

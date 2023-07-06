@@ -2,23 +2,22 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { getFeedArticle, getGlobalArticle, getTags } from '../apis';
 import ArticlePreview from '../components/profile/ArticlePreview';
-import { ArticleListProps } from '../apis/types';
+import { ArticleListProps, HomeActiveTab } from '../apis/types';
 import { loginState } from '../atoms';
 
 function Home() {
-  const [isYourTab, setIsYourTab] = useState(true);
+  const loggedIn = useRecoilValue(loginState);
+  const [activeTab, setActiveTab] = useState<HomeActiveTab>('global');
   const [articles, setArticles] = useState([]);
   const [tags, setTags] = useState([]);
-  const logined = useRecoilValue(loginState);
 
-  const fetchFeedArticle = async () => {
-    const articleData = logined ? await getFeedArticle() : await getGlobalArticle();
+  const fetchUserFeedArticle = async () => {
+    const articleData = await getFeedArticle();
     setArticles(articleData.articles);
   };
 
-  const handleClickTab = async () => {
-    setIsYourTab(!isYourTab);
-    const articleData = isYourTab ? await getFeedArticle() : await getGlobalArticle();
+  const fetchGlobalFeedArticle = async () => {
+    const articleData = await getGlobalArticle();
     setArticles(articleData.articles);
   };
 
@@ -28,9 +27,25 @@ function Home() {
   };
 
   useEffect(() => {
-    fetchFeedArticle();
+    if (loggedIn) {
+      setActiveTab('your');
+      fetchUserFeedArticle();
+    } else {
+      setActiveTab('global');
+      fetchGlobalFeedArticle();
+    }
     fetchTags();
-  }, []);
+  }, [loggedIn]);
+
+  const handleClickYourFeed = () => {
+    setActiveTab('your');
+    fetchUserFeedArticle();
+  };
+
+  const handleClickGlobalFeed = () => {
+    setActiveTab('global');
+    fetchGlobalFeedArticle();
+  };
 
   return (
     <div className="home-page">
@@ -46,38 +61,26 @@ function Home() {
           <div className="col-md-9">
             <div className="feed-toggle">
               <ul className="nav nav-pills outline-active">
-                {logined ? (
-                  <>
-                    <li className="nav-item">
-                      <button
-                        type="button"
-                        className={isYourTab ? 'nav-link active' : 'nav-link disabled'}
-                        onClick={() => handleClickTab()}
-                      >
-                        Your Feed
-                      </button>
-                    </li>
-                    <li className="nav-item">
-                      <button
-                        type="button"
-                        className={isYourTab ? 'nav-link disabled' : 'nav-link active'}
-                        onClick={() => handleClickTab()}
-                      >
-                        Global Feed
-                      </button>
-                    </li>
-                  </>
-                ) : (
+                {loggedIn && (
                   <li className="nav-item">
                     <button
                       type="button"
-                      className='nav-link active'
-                      onClick={() => handleClickTab()}
+                      className={activeTab === 'your' ? 'nav-link active' : 'nav-link'}
+                      onClick={() => handleClickYourFeed()}
                     >
-                      Global Feed
+                      Your Feed
                     </button>
                   </li>
                 )}
+                <li className="nav-item">
+                  <button
+                    type="button"
+                    className={activeTab === 'global' ? 'nav-link active' : 'nav-link'}
+                    onClick={() => handleClickGlobalFeed()}
+                  >
+                    Global Feed
+                  </button>
+                </li>
               </ul>
             </div>
             {articles.map((article: ArticleListProps) => (
@@ -91,7 +94,7 @@ function Home() {
 
               <div className="tag-list">
                 {tags.map((tag) => (
-                  <a href="/" className="tag-pill tag-default">
+                  <a key={tag} href="/" className="tag-pill tag-default">
                     {tag}
                   </a>
                 ))}

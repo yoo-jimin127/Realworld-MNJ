@@ -16,8 +16,8 @@ function Login() {
     event.preventDefault();
     const { user } = await postLogin({ email, password });
     localStorage.setItem('token', user.token);
-    setLogined(true);
     setUserInfo(user);
+    setLogined(true);
     navigate('/');
   };
 

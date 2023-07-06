@@ -12,7 +12,6 @@ export const myArticlesLoader = async ({ params }: LoaderFunctionArgs) => {
     getProfile(username),
     getMyArticles(username),
   ]);
-  console.log(profileData);
   return { profileData, articleData };
 };
 
