@@ -2,17 +2,19 @@ import axios from 'axios';
 import { RegisterProps, LoginProps, SettingProps, ArticleProps } from './types';
 
 const baseURL = `https://api.realworld.io/api`;
-
-const token = localStorage.getItem('token');
-const authHttp = axios.create({
-  baseURL,
-  headers: {
-    Authorization: `Token ${token}`,
-  },
-});
-
 const http = axios.create({
   baseURL,
+});
+
+const authHttp = axios.create({
+  baseURL,
+});
+
+// 매 API 요청마다 header에 token 값을 넣어주는 Axios Interceptor
+authHttp.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  config.headers.Authorization = `Token ${token}`;
+  return config;
 });
 
 export const postRegister = async (user: RegisterProps) => {
@@ -117,4 +119,4 @@ export const unfavoriteArticle = async (slug: string) => {
 export const getTags = async () => {
   const res = await http.get('/tags');
   return res.data;
-}
+};
