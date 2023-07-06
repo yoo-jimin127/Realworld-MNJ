@@ -1,5 +1,6 @@
 import { atom, selector } from 'recoil';
 import { getUserInfo } from '../apis';
+import { UserInfo } from '../apis/types';
 
 /** 로그인 여부 */
 export const loginState = atom({
@@ -9,16 +10,28 @@ export const loginState = atom({
 });
 
 /** user 정보 selector */
-const userStateSelector = selector({
+const userStateSelector = selector<UserInfo>({
   key: 'userStateSelector',
-  get: async () => {
-    const { user } = await getUserInfo();
-    return user;
+  get: async ({ get }) => {
+    const logined = get(loginState);
+    console.log(logined);
+    if (logined) {
+      const { user } = await getUserInfo();
+      return user;
+    }
+
+    return {
+      email: '',
+      token: '',
+      username: '',
+      bio: '',
+      image: '',
+    };
   },
 });
 
 /** user 정보 관리 */
-export const userState = atom({
+export const userState = atom<UserInfo>({
   key: 'userState',
   default: userStateSelector,
 });

@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArticleListProps } from '../../apis/types';
 
-function ArticleForm({ article }: { article: ArticleListProps }) {
+function ArticlePreview({ article }: { article: ArticleListProps }) {
   return (
     <div className="article-preview">
       <div className="article-meta">
@@ -21,11 +20,11 @@ function ArticleForm({ article }: { article: ArticleListProps }) {
       </div>
       <Link to={`/article/${article.slug}`} className="preview-link">
         <h1>{article.title}</h1>
-        <p>{article.body}</p>
+        <p>{article.description}</p>
         <span>Read more...</span>
       </Link>
     </div>
   );
 }
 
-export default ArticleForm;
+export default ArticlePreview;

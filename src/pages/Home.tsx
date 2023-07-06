@@ -1,6 +1,52 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { getFeedArticle, getGlobalArticle, getTags } from '../apis';
+import ArticlePreview from '../components/profile/ArticlePreview';
+import { ArticleListProps, HomeActiveTab } from '../apis/types';
+import { loginState } from '../atoms';
 
 function Home() {
+  const loggedIn = useRecoilValue(loginState);
+  const [activeTab, setActiveTab] = useState<HomeActiveTab>('global');
+  const [articles, setArticles] = useState([]);
+  const [tags, setTags] = useState([]);
+
+  const fetchUserFeedArticle = async () => {
+    const articleData = await getFeedArticle();
+    setArticles(articleData.articles);
+  };
+
+  const fetchGlobalFeedArticle = async () => {
+    const articleData = await getGlobalArticle();
+    setArticles(articleData.articles);
+  };
+
+  const fetchTags = async () => {
+    const tagData = await getTags();
+    setTags(tagData.tags);
+  };
+
+  useEffect(() => {
+    if (loggedIn) {
+      setActiveTab('your');
+      fetchUserFeedArticle();
+    } else {
+      setActiveTab('global');
+      fetchGlobalFeedArticle();
+    }
+    fetchTags();
+  }, [loggedIn]);
+
+  const handleClickYourFeed = () => {
+    setActiveTab('your');
+    fetchUserFeedArticle();
+  };
+
+  const handleClickGlobalFeed = () => {
+    setActiveTab('global');
+    fetchGlobalFeedArticle();
+  };
+
   return (
     <div className="home-page">
       <div className="banner">
@@ -15,65 +61,31 @@ function Home() {
           <div className="col-md-9">
             <div className="feed-toggle">
               <ul className="nav nav-pills outline-active">
+                {loggedIn && (
+                  <li className="nav-item">
+                    <button
+                      type="button"
+                      className={activeTab === 'your' ? 'nav-link active' : 'nav-link'}
+                      onClick={() => handleClickYourFeed()}
+                    >
+                      Your Feed
+                    </button>
+                  </li>
+                )}
                 <li className="nav-item">
-                  <a className="nav-link disabled" href="">
-                    Your Feed
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link active" href="">
+                  <button
+                    type="button"
+                    className={activeTab === 'global' ? 'nav-link active' : 'nav-link'}
+                    onClick={() => handleClickGlobalFeed()}
+                  >
                     Global Feed
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
-
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="profile.html">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" />
-                </a>
-                <div className="info">
-                  <Link to="/@Anah Benešová" className="author">
-                    Eric Simons
-                  </Link>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart" /> 29
-                </button>
-              </div>
-              <Link
-                to="article/If-we-quantify-the-alarm-we-can-get-to-the-FTP-pixel-through-the-online-SSL-interface!-120863"
-                className="preview-link"
-              >
-                <h1>How to build webapps that scale</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-              </Link>
-            </div>
-
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="profile.html">
-                  <img src="http://i.imgur.com/N4VcUeJ.jpg" />
-                </a>
-                <div className="info">
-                  <a href="" className="author">
-                    Albert Pai
-                  </a>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart" /> 32
-                </button>
-              </div>
-              <a href="" className="preview-link">
-                <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-              </a>
-            </div>
+            {articles.map((article: ArticleListProps) => (
+              <ArticlePreview key={article.slug} article={article} />
+            ))}
           </div>
 
           <div className="col-md-3">
@@ -81,30 +93,11 @@ function Home() {
               <p>Popular Tags</p>
 
               <div className="tag-list">
-                <a href="" className="tag-pill tag-default">
-                  programming
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  javascript
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  emberjs
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  angularjs
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  react
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  mean
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  node
-                </a>
-                <a href="" className="tag-pill tag-default">
-                  rails
-                </a>
+                {tags.map((tag) => (
+                  <a key={tag} href="/" className="tag-pill tag-default">
+                    {tag}
+                  </a>
+                ))}
               </div>
             </div>
           </div>

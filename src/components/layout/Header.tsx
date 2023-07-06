@@ -3,8 +3,8 @@ import { useRecoilValue } from 'recoil';
 import { loginState, userState } from '../../atoms';
 
 function Header() {
-  const logined = useRecoilValue(loginState);
   const userInfo = useRecoilValue(userState);
+  const logined = useRecoilValue(loginState);
   const activeTabClass = ({ isActive }: { isActive: boolean }) =>
     (isActive ? 'active' : '').concat(' ', 'nav-link');
 

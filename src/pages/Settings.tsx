@@ -23,6 +23,13 @@ function Settings() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    setUserInfo({
+      email: '',
+      token: '',
+      username: '',
+      bio: '',
+      image: '',
+    });
     setLogined(false);
     navigate('/');
   };
