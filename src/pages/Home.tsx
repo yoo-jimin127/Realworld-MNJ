@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { getFeedArticle, getGlobalArticle, getTags } from '../apis';
+import {
+  getFeedArticle,
+  getGlobalArticle,
+  getTags,
+  favoriteArticle,
+  unfavoriteArticle,
+} from '../apis';
 import ArticlePreview from '../components/profile/ArticlePreview';
 import { ArticleListProps, HomeActiveTab } from '../apis/types';
 import { loginState } from '../atoms';
@@ -8,7 +14,7 @@ import { loginState } from '../atoms';
 function Home() {
   const loggedIn = useRecoilValue(loginState);
   const [activeTab, setActiveTab] = useState<HomeActiveTab>('global');
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<ArticleListProps[]>([]);
   const [tags, setTags] = useState([]);
 
   const fetchUserFeedArticle = async () => {
@@ -24,6 +30,30 @@ function Home() {
   const fetchTags = async () => {
     const tagData = await getTags();
     setTags(tagData.tags);
+  };
+
+  const handleClickFavorite = async (slug: string) => {
+    const articleData = await favoriteArticle(slug);
+    setArticles(
+      articles.map((article) => {
+        if (articleData.article.slug === article.slug) {
+          return articleData.article;
+        }
+        return article;
+      }),
+    );
+  };
+
+  const handleClickUnfavorite = async (slug: string) => {
+    const articleData = await unfavoriteArticle(slug);
+    setArticles(
+      articles.map((article) => {
+        if (articleData.article.slug === article.slug) {
+          return articleData.article;
+        }
+        return article;
+      }),
+    );
   };
 
   useEffect(() => {
@@ -84,7 +114,12 @@ function Home() {
               </ul>
             </div>
             {articles.map((article: ArticleListProps) => (
-              <ArticlePreview key={article.slug} article={article} />
+              <ArticlePreview
+                key={article.slug}
+                article={article}
+                onClickFavorite={handleClickFavorite}
+                onClickUnfavorite={handleClickUnfavorite}
+              />
             ))}
           </div>
 

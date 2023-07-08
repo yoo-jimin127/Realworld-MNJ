@@ -1,7 +1,34 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { ArticleListProps } from '../../apis/types';
+import { loginState } from '../../atoms';
 
-function ArticlePreview({ article }: { article: ArticleListProps }) {
+function ArticlePreview({
+  article,
+  onClickFavorite,
+  onClickUnfavorite,
+}: {
+  article: ArticleListProps;
+  onClickFavorite: (slug: string) => Promise<void>;
+  onClickUnfavorite: (slug: string) => Promise<void>;
+}) {
+  const loggedIn = useRecoilValue(loginState);
+  const navigate = useNavigate();
+
+  const handleClickFavorite = () => {
+    if (!loggedIn) {
+      navigate('/register');
+      return;
+    }
+
+    if (article.favorited) {
+      onClickUnfavorite(article.slug);
+      return;
+    }
+
+    onClickFavorite(article.slug);
+  };
+
   return (
     <div className="article-preview">
       <div className="article-meta">
@@ -14,7 +41,14 @@ function ArticlePreview({ article }: { article: ArticleListProps }) {
           </Link>
           <span className="date">{article.createdAt}</span>
         </div>
-        <button type="button" className="btn btn-outline-primary btn-sm pull-xs-right">
+        <button
+          type="button"
+          onClick={handleClickFavorite}
+          className={(article.favorited ? ' btn-primary' : 'btn-outline-primary').concat(
+            ' ',
+            'btn btn-sm pull-xs-right',
+          )}
+        >
           <i className="ion-heart" /> {article.favoritesCount}
         </button>
       </div>
