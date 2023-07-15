@@ -6,21 +6,29 @@ import {
   favoriteArticle,
   followUser,
   getArticle,
+  getComments,
   unfavoriteArticle,
   unfollowUser,
 } from '../apis';
-import { ArticleListProps } from '../apis/types';
 import { userState } from '../atoms';
+import CommentCard from '../components/comment/CommentCard';
+import { ArticleListProps, Comment } from '../apis/types';
 
 export const articleLoader = async ({ params }: LoaderFunctionArgs) => {
   const slug = params.articleSlug!;
-  const { article } = await getArticle(slug);
-  return article;
+  const [articleData, commentsData] = await Promise.all([getArticle(slug), getComments(slug)]);
+  return { articleData, commentsData };
 };
 
 function Article() {
   const navigate = useNavigate();
-  const article = useLoaderData() as ArticleListProps;
+  const {
+    articleData: { article },
+    commentsData: { comments },
+  } = useLoaderData() as {
+    articleData: { article: ArticleListProps };
+    commentsData: { comments: Comment[] };
+  };
   const userInfo = useRecoilValue(userState);
   const [favorited, setFavorited] = useState(article.favorited);
   const [favoriteCount, setFavoriteCount] = useState(article.favoritesCount);
@@ -61,13 +69,13 @@ function Article() {
           <h1>{article.title}</h1>
 
           <div className="article-meta">
-            <a href="/">
+            <Link to={`/@${article.author.username}`}>
               <img src="http://i.imgur.com/Qr71crq.jpg" alt="" />
-            </a>
+            </Link>
             <div className="info">
-              <a href="/" className="author">
+              <Link to={`/@${article.author.username}`} className="author">
                 {article.author.username}
-              </a>
+              </Link>
               {/* TODO: 날짜 포맷팅 */}
               <span className="date">{article.createdAt}</span>
             </div>
@@ -95,7 +103,10 @@ function Article() {
                       ? () => handleClickUnfollow(article.author.username)
                       : () => handleClickFollow(article.author.username)
                   }
-                  className="btn btn-sm btn-outline-secondary"
+                  className={(isFollowing ? 'btn-secondary' : 'btn-outline-secondary').concat(
+                    ' ',
+                    'btn btn-sm',
+                  )}
                   type="button"
                 >
                   <i className="ion-plus-round" />
@@ -108,11 +119,14 @@ function Article() {
                       ? () => handleClickUnfavorite(article.slug)
                       : () => handleClickFavorite(article.slug)
                   }
-                  className="btn btn-sm btn-outline-primary"
+                  className={(favorited ? 'btn-primary' : 'btn-outline-primary').concat(
+                    ' ',
+                    'btn btn-sm',
+                  )}
                   type="button"
                 >
                   <i className="ion-heart" />
-                  &nbsp; {favorited ? 'Unfavorite' : 'Favorite'} Post{' '}
+                  &nbsp; {favorited ? 'Unfavorite' : 'Favorite'} Article{' '}
                   <span className="counter">({favoriteCount})</span>
                 </button>
               </>
@@ -127,7 +141,9 @@ function Article() {
             <p>{article.body}</p>
             <ul className="tag-list">
               {article.tagList.map((tag) => (
-                <li className="tag-default tag-pill tag-outline ng-binding ng-scope">{tag}</li>
+                <li key={tag} className="tag-default tag-pill tag-outline ng-binding ng-scope">
+                  {tag}
+                </li>
               ))}
             </ul>
           </div>
@@ -137,23 +153,46 @@ function Article() {
 
         <div className="article-actions">
           <div className="article-meta">
-            <a href="profile.html">
+            <Link to={`/${article.author.username}`}>
               <img src="http://i.imgur.com/Qr71crq.jpg" alt="" />
-            </a>
+            </Link>
             <div className="info">
-              <a href="/" className="author">
+              <Link to={`/${article.author.username}`} className="author">
                 {article.author.username}
-              </a>
+              </Link>
               <span className="date">{article.createdAt}</span>
             </div>
-            <button className="btn btn-sm btn-outline-secondary" type="button">
+            <button
+              onClick={
+                isFollowing
+                  ? () => handleClickUnfollow(article.author.username)
+                  : () => handleClickFollow(article.author.username)
+              }
+              className={(isFollowing ? 'btn-secondary' : 'btn-outline-secondary').concat(
+                ' ',
+                'btn btn-sm',
+              )}
+              type="button"
+            >
               <i className="ion-plus-round" />
-              &nbsp; Follow {article.author.username}
+              &nbsp; {isFollowing ? 'Unfollow' : 'Follow'} {article.author.username}{' '}
             </button>
             &nbsp;
-            <button className="btn btn-sm btn-outline-primary" type="button">
+            <button
+              onClick={
+                favorited
+                  ? () => handleClickUnfavorite(article.slug)
+                  : () => handleClickFavorite(article.slug)
+              }
+              className={(favorited ? 'btn-primary' : 'btn-outline-primary').concat(
+                ' ',
+                'btn btn-sm',
+              )}
+              type="button"
+            >
               <i className="ion-heart" />
-              &nbsp; Favorite Post <span className="counter">({article.favoritesCount})</span>
+              &nbsp; {favorited ? 'Unfavorite' : 'Favorite'} Article{' '}
+              <span className="counter">({article.favoritesCount})</span>
             </button>
           </div>
         </div>
@@ -171,28 +210,9 @@ function Article() {
                 </button>
               </div>
             </form>
-
-            <div className="card">
-              <div className="card-block">
-                <p className="card-text">
-                  With supporting text below as a natural lead-in to additional content.
-                </p>
-              </div>
-              <div className="card-footer">
-                <a href="/" className="comment-author">
-                  <img alt="" src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                </a>
-                &nbsp;
-                <a href="/" className="comment-author">
-                  Jacob Schmidt
-                </a>
-                <span className="date-posted">Dec 29th</span>
-                <span className="mod-options">
-                  <i className="ion-edit" />
-                  <i className="ion-trash-a" />
-                </span>
-              </div>
-            </div>
+            {comments.map((comment) => (
+              <CommentCard key={comment.id} comment={comment} />
+            ))}
           </div>
         </div>
       </div>

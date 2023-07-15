@@ -120,3 +120,8 @@ export const getTags = async () => {
   const res = await http.get('/tags');
   return res.data;
 };
+
+export const getComments = async (slug: string) => {
+  const res = await http.get(`/articles/${slug}/comments`);
+  return res.data;
+};

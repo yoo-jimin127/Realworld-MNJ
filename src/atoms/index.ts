@@ -14,7 +14,6 @@ const userStateSelector = selector<UserInfo>({
   key: 'userStateSelector',
   get: async ({ get }) => {
     const logined = get(loginState);
-    console.log(logined);
     if (logined) {
       const { user } = await getUserInfo();
       return user;
