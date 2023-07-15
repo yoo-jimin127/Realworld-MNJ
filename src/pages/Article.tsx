@@ -2,6 +2,7 @@ import { Link, LoaderFunctionArgs, useLoaderData, useNavigate } from 'react-rout
 import { useRecoilValue } from 'recoil';
 import { useState } from 'react';
 import {
+  createComment,
   deleteArticle,
   favoriteArticle,
   followUser,
@@ -33,6 +34,9 @@ function Article() {
   const [favorited, setFavorited] = useState(article.favorited);
   const [favoriteCount, setFavoriteCount] = useState(article.favoritesCount);
   const [isFollowing, setIsFollowing] = useState(article.author.following);
+  const [commentsData, setCommentsData] = useState(comments);
+  const [commentText, setCommentText] = useState('');
+
   const isSelf = article.author.username === userInfo.username;
 
   const handleDelete = (slug: string) => {
@@ -60,6 +64,13 @@ function Article() {
     const articleData = await unfavoriteArticle(slug);
     setFavorited(articleData.article.favorited);
     setFavoriteCount(articleData.article.favoritesCount);
+  };
+
+  const handleSubmitComment = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const commentData = await createComment(article.slug, commentText);
+    setCommentsData([...commentsData, commentData.comment]);
+    setCommentText('');
   };
 
   return (
@@ -199,18 +210,23 @@ function Article() {
 
         <div className="row">
           <div className="col-xs-12 col-md-8 offset-md-2">
-            <form className="card comment-form">
+            <form className="card comment-form" onSubmit={handleSubmitComment}>
               <div className="card-block">
-                <textarea className="form-control" placeholder="Write a comment..." />
+                <textarea
+                  className="form-control"
+                  placeholder="Write a comment..."
+                  value={commentText}
+                  onChange={(event) => setCommentText(event.target.value)}
+                />
               </div>
               <div className="card-footer">
                 <img alt="" src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                <button type="button" className="btn btn-sm btn-primary">
+                <button type="submit" className="btn btn-sm btn-primary">
                   Post Comment
                 </button>
               </div>
             </form>
-            {comments.map((comment) => (
+            {commentsData.map((comment) => (
               <CommentCard key={comment.id} comment={comment} />
             ))}
           </div>

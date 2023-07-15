@@ -8,12 +8,12 @@ function CommentCard({ comment }: { comment: Comment }) {
         <p className="card-text">{comment.body}</p>
       </div>
       <div className="card-footer">
-        <Link to={`/@${comment.author}`} className="comment-author">
+        <Link to={`/@${comment.author.username}`} className="comment-author">
           <img alt="" src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
         </Link>
         &nbsp;
-        <Link to={`/@${comment.author}`} className="comment-author">
-          Jacob Schmidt
+        <Link to={`/@${comment.author.username}`} className="comment-author">
+          {comment.author.username}
         </Link>
         <span className="date-posted">{comment.createdAt}</span>
         <span className="mod-options">

@@ -125,3 +125,12 @@ export const getComments = async (slug: string) => {
   const res = await http.get(`/articles/${slug}/comments`);
   return res.data;
 };
+
+export const createComment = async (slug: string, comment: string) => {
+  const res = await authHttp.post(`/articles/${slug}/comments`, {
+    comment: {
+      body: comment,
+    },
+  });
+  return res.data;
+};
