@@ -4,6 +4,7 @@ import { useState } from 'react';
 import {
   createComment,
   deleteArticle,
+  deleteComment,
   favoriteArticle,
   followUser,
   getArticle,
@@ -69,8 +70,13 @@ function Article() {
   const handleSubmitComment = async (event: React.FormEvent) => {
     event.preventDefault();
     const commentData = await createComment(article.slug, commentText);
-    setCommentsData([...commentsData, commentData.comment]);
+    setCommentsData([commentData.comment, ...commentsData]);
     setCommentText('');
+  };
+
+  const handleDeleteComment = async (id: number) => {
+    await deleteComment(article.slug, id);
+    setCommentsData(commentsData.filter((comment) => comment.id !== id));
   };
 
   return (
@@ -173,38 +179,58 @@ function Article() {
               </Link>
               <span className="date">{article.createdAt}</span>
             </div>
-            <button
-              onClick={
-                isFollowing
-                  ? () => handleClickUnfollow(article.author.username)
-                  : () => handleClickFollow(article.author.username)
-              }
-              className={(isFollowing ? 'btn-secondary' : 'btn-outline-secondary').concat(
-                ' ',
-                'btn btn-sm',
-              )}
-              type="button"
-            >
-              <i className="ion-plus-round" />
-              &nbsp; {isFollowing ? 'Unfollow' : 'Follow'} {article.author.username}{' '}
-            </button>
-            &nbsp;
-            <button
-              onClick={
-                favorited
-                  ? () => handleClickUnfavorite(article.slug)
-                  : () => handleClickFavorite(article.slug)
-              }
-              className={(favorited ? 'btn-primary' : 'btn-outline-primary').concat(
-                ' ',
-                'btn btn-sm',
-              )}
-              type="button"
-            >
-              <i className="ion-heart" />
-              &nbsp; {favorited ? 'Unfavorite' : 'Favorite'} Article{' '}
-              <span className="counter">({article.favoritesCount})</span>
-            </button>
+            {isSelf ? (
+              <>
+                <Link className="btn btn-sm btn-outline-secondary" to={`/editor/${article.slug}`}>
+                  <i className="ion-edit" />
+                  &nbsp; Edit Article
+                </Link>
+                &nbsp;&nbsp;
+                <button
+                  className="btn btn-sm btn-outline-danger"
+                  type="button"
+                  onClick={() => handleDelete(article.slug)}
+                >
+                  <i className="ion-trash-a" />
+                  &nbsp; Delete Article
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={
+                    isFollowing
+                      ? () => handleClickUnfollow(article.author.username)
+                      : () => handleClickFollow(article.author.username)
+                  }
+                  className={(isFollowing ? 'btn-secondary' : 'btn-outline-secondary').concat(
+                    ' ',
+                    'btn btn-sm',
+                  )}
+                  type="button"
+                >
+                  <i className="ion-plus-round" />
+                  &nbsp; {isFollowing ? 'Unfollow' : 'Follow'} {article.author.username}{' '}
+                </button>
+                &nbsp;
+                <button
+                  onClick={
+                    favorited
+                      ? () => handleClickUnfavorite(article.slug)
+                      : () => handleClickFavorite(article.slug)
+                  }
+                  className={(favorited ? 'btn-primary' : 'btn-outline-primary').concat(
+                    ' ',
+                    'btn btn-sm',
+                  )}
+                  type="button"
+                >
+                  <i className="ion-heart" />
+                  &nbsp; {favorited ? 'Unfavorite' : 'Favorite'} Article{' '}
+                  <span className="counter">({article.favoritesCount})</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -227,7 +253,11 @@ function Article() {
               </div>
             </form>
             {commentsData.map((comment) => (
-              <CommentCard key={comment.id} comment={comment} />
+              <CommentCard
+                key={comment.id}
+                comment={comment}
+                handleDeleteComment={handleDeleteComment}
+              />
             ))}
           </div>
         </div>

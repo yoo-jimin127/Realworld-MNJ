@@ -134,3 +134,8 @@ export const createComment = async (slug: string, comment: string) => {
   });
   return res.data;
 };
+
+export const deleteComment = async (slug: string, id: number) => {
+  const res = await authHttp.delete(`/articles/${slug}/comments/${id}`);
+  return res.data;
+};

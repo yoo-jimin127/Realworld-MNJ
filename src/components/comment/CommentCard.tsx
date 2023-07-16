@@ -1,7 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Comment } from '../../apis/types';
 
-function CommentCard({ comment }: { comment: Comment }) {
+function CommentCard({
+  comment,
+  handleDeleteComment,
+}: {
+  comment: Comment;
+  handleDeleteComment: (id: number) => Promise<void>;
+}) {
   return (
     <div className="card">
       <div className="card-block">
@@ -17,8 +23,12 @@ function CommentCard({ comment }: { comment: Comment }) {
         </Link>
         <span className="date-posted">{comment.createdAt}</span>
         <span className="mod-options">
-          <i className="ion-edit" />
-          <i className="ion-trash-a" />
+          <i
+            className="ion-trash-a"
+            role="presentation"
+            onClick={() => handleDeleteComment(comment.id)}
+            onKeyDown={() => handleDeleteComment(comment.id)}
+          />
         </span>
       </div>
     </div>
