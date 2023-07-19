@@ -2,29 +2,42 @@ import { Link, LoaderFunctionArgs, useLoaderData, useNavigate } from 'react-rout
 import { useRecoilValue } from 'recoil';
 import { useState } from 'react';
 import {
+  createComment,
   deleteArticle,
+  deleteComment,
   favoriteArticle,
   followUser,
   getArticle,
+  getComments,
   unfavoriteArticle,
   unfollowUser,
 } from '../apis';
-import { ArticleListProps } from '../apis/types';
 import { userState } from '../atoms';
+import CommentCard from '../components/comment/CommentCard';
+import { ArticleListProps, Comment } from '../apis/types';
 
 export const articleLoader = async ({ params }: LoaderFunctionArgs) => {
   const slug = params.articleSlug!;
-  const { article } = await getArticle(slug);
-  return article;
+  const [articleData, commentsData] = await Promise.all([getArticle(slug), getComments(slug)]);
+  return { articleData, commentsData };
 };
 
 function Article() {
   const navigate = useNavigate();
-  const article = useLoaderData() as ArticleListProps;
+  const {
+    articleData: { article },
+    commentsData: { comments },
+  } = useLoaderData() as {
+    articleData: { article: ArticleListProps };
+    commentsData: { comments: Comment[] };
+  };
   const userInfo = useRecoilValue(userState);
   const [favorited, setFavorited] = useState(article.favorited);
   const [favoriteCount, setFavoriteCount] = useState(article.favoritesCount);
   const [isFollowing, setIsFollowing] = useState(article.author.following);
+  const [commentsData, setCommentsData] = useState(comments);
+  const [commentText, setCommentText] = useState('');
+
   const isSelf = article.author.username === userInfo.username;
 
   const handleDelete = (slug: string) => {
@@ -54,6 +67,18 @@ function Article() {
     setFavoriteCount(articleData.article.favoritesCount);
   };
 
+  const handleSubmitComment = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const commentData = await createComment(article.slug, commentText);
+    setCommentsData([commentData.comment, ...commentsData]);
+    setCommentText('');
+  };
+
+  const handleDeleteComment = async (id: number) => {
+    await deleteComment(article.slug, id);
+    setCommentsData(commentsData.filter((comment) => comment.id !== id));
+  };
+
   return (
     <div className="article-page">
       <div className="banner">
@@ -61,13 +86,13 @@ function Article() {
           <h1>{article.title}</h1>
 
           <div className="article-meta">
-            <a href="/">
+            <Link to={`/@${article.author.username}`}>
               <img src="http://i.imgur.com/Qr71crq.jpg" alt="" />
-            </a>
+            </Link>
             <div className="info">
-              <a href="/" className="author">
+              <Link to={`/@${article.author.username}`} className="author">
                 {article.author.username}
-              </a>
+              </Link>
               {/* TODO: 날짜 포맷팅 */}
               <span className="date">{article.createdAt}</span>
             </div>
@@ -95,7 +120,10 @@ function Article() {
                       ? () => handleClickUnfollow(article.author.username)
                       : () => handleClickFollow(article.author.username)
                   }
-                  className="btn btn-sm btn-outline-secondary"
+                  className={(isFollowing ? 'btn-secondary' : 'btn-outline-secondary').concat(
+                    ' ',
+                    'btn btn-sm',
+                  )}
                   type="button"
                 >
                   <i className="ion-plus-round" />
@@ -108,11 +136,14 @@ function Article() {
                       ? () => handleClickUnfavorite(article.slug)
                       : () => handleClickFavorite(article.slug)
                   }
-                  className="btn btn-sm btn-outline-primary"
+                  className={(favorited ? 'btn-primary' : 'btn-outline-primary').concat(
+                    ' ',
+                    'btn btn-sm',
+                  )}
                   type="button"
                 >
                   <i className="ion-heart" />
-                  &nbsp; {favorited ? 'Unfavorite' : 'Favorite'} Post{' '}
+                  &nbsp; {favorited ? 'Unfavorite' : 'Favorite'} Article{' '}
                   <span className="counter">({favoriteCount})</span>
                 </button>
               </>
@@ -127,7 +158,9 @@ function Article() {
             <p>{article.body}</p>
             <ul className="tag-list">
               {article.tagList.map((tag) => (
-                <li className="tag-default tag-pill tag-outline ng-binding ng-scope">{tag}</li>
+                <li key={tag} className="tag-default tag-pill tag-outline ng-binding ng-scope">
+                  {tag}
+                </li>
               ))}
             </ul>
           </div>
@@ -137,62 +170,95 @@ function Article() {
 
         <div className="article-actions">
           <div className="article-meta">
-            <a href="profile.html">
+            <Link to={`/${article.author.username}`}>
               <img src="http://i.imgur.com/Qr71crq.jpg" alt="" />
-            </a>
+            </Link>
             <div className="info">
-              <a href="/" className="author">
+              <Link to={`/${article.author.username}`} className="author">
                 {article.author.username}
-              </a>
+              </Link>
               <span className="date">{article.createdAt}</span>
             </div>
-            <button className="btn btn-sm btn-outline-secondary" type="button">
-              <i className="ion-plus-round" />
-              &nbsp; Follow {article.author.username}
-            </button>
-            &nbsp;
-            <button className="btn btn-sm btn-outline-primary" type="button">
-              <i className="ion-heart" />
-              &nbsp; Favorite Post <span className="counter">({article.favoritesCount})</span>
-            </button>
+            {isSelf ? (
+              <>
+                <Link className="btn btn-sm btn-outline-secondary" to={`/editor/${article.slug}`}>
+                  <i className="ion-edit" />
+                  &nbsp; Edit Article
+                </Link>
+                &nbsp;&nbsp;
+                <button
+                  className="btn btn-sm btn-outline-danger"
+                  type="button"
+                  onClick={() => handleDelete(article.slug)}
+                >
+                  <i className="ion-trash-a" />
+                  &nbsp; Delete Article
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={
+                    isFollowing
+                      ? () => handleClickUnfollow(article.author.username)
+                      : () => handleClickFollow(article.author.username)
+                  }
+                  className={(isFollowing ? 'btn-secondary' : 'btn-outline-secondary').concat(
+                    ' ',
+                    'btn btn-sm',
+                  )}
+                  type="button"
+                >
+                  <i className="ion-plus-round" />
+                  &nbsp; {isFollowing ? 'Unfollow' : 'Follow'} {article.author.username}{' '}
+                </button>
+                &nbsp;
+                <button
+                  onClick={
+                    favorited
+                      ? () => handleClickUnfavorite(article.slug)
+                      : () => handleClickFavorite(article.slug)
+                  }
+                  className={(favorited ? 'btn-primary' : 'btn-outline-primary').concat(
+                    ' ',
+                    'btn btn-sm',
+                  )}
+                  type="button"
+                >
+                  <i className="ion-heart" />
+                  &nbsp; {favorited ? 'Unfavorite' : 'Favorite'} Article{' '}
+                  <span className="counter">({article.favoritesCount})</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
 
         <div className="row">
           <div className="col-xs-12 col-md-8 offset-md-2">
-            <form className="card comment-form">
+            <form className="card comment-form" onSubmit={handleSubmitComment}>
               <div className="card-block">
-                <textarea className="form-control" placeholder="Write a comment..." />
+                <textarea
+                  className="form-control"
+                  placeholder="Write a comment..."
+                  value={commentText}
+                  onChange={(event) => setCommentText(event.target.value)}
+                />
               </div>
               <div className="card-footer">
                 <img alt="" src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                <button type="button" className="btn btn-sm btn-primary">
+                <button type="submit" className="btn btn-sm btn-primary">
                   Post Comment
                 </button>
               </div>
             </form>
-
-            <div className="card">
-              <div className="card-block">
-                <p className="card-text">
-                  With supporting text below as a natural lead-in to additional content.
-                </p>
-              </div>
-              <div className="card-footer">
-                <a href="/" className="comment-author">
-                  <img alt="" src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                </a>
-                &nbsp;
-                <a href="/" className="comment-author">
-                  Jacob Schmidt
-                </a>
-                <span className="date-posted">Dec 29th</span>
-                <span className="mod-options">
-                  <i className="ion-edit" />
-                  <i className="ion-trash-a" />
-                </span>
-              </div>
-            </div>
+            {commentsData.map((comment) => (
+              <CommentCard
+                key={comment.id}
+                comment={comment}
+                handleDeleteComment={handleDeleteComment}
+              />
+            ))}
           </div>
         </div>
       </div>

@@ -120,3 +120,22 @@ export const getTags = async () => {
   const res = await http.get('/tags');
   return res.data;
 };
+
+export const getComments = async (slug: string) => {
+  const res = await http.get(`/articles/${slug}/comments`);
+  return res.data;
+};
+
+export const createComment = async (slug: string, comment: string) => {
+  const res = await authHttp.post(`/articles/${slug}/comments`, {
+    comment: {
+      body: comment,
+    },
+  });
+  return res.data;
+};
+
+export const deleteComment = async (slug: string, id: number) => {
+  const res = await authHttp.delete(`/articles/${slug}/comments/${id}`);
+  return res.data;
+};
